@@ -1,0 +1,1 @@
+words_ar.npy filter=lfs diff=lfs merge=lfs -text
