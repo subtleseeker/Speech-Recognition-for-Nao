@@ -6,8 +6,10 @@ from time import sleep
 import os
 import numpy as np
 from naoqi import ALProxy
+import warnings
+warnings.filterwarnings("ignore")
 
-ip = "172.16.21.206"
+ip = "172.16.21.208"
 port = 9559
 
 DATA_PATH = "./eng_data/"
@@ -24,13 +26,14 @@ def get_labels(path=DATA_PATH):
 
 def load_model():
 	# load json and create model
-	json_file = open('model.json', 'r')
+	json_file = open('model1.json', 'r')
 	model_json = json_file.read()
 	json_file.close()
 	model = model_from_json(model_json)
 	# load weights into new model
-	model.load_weights("model.h5")
+	model.load_weights("model1.h5")
 	print("Loaded model from disk")
+	print("Words to command: ", get_labels())
 	return model
 
 
@@ -101,46 +104,65 @@ def init():
 def nao_call(word, nao_com):
 	posture, navigation, tts, motion, battery, led = nao_com
 
-	if(word == 'down'):
-	    posture.goToPosture("SitRelax",1.0)
-	if(word == 'up'):
-	    posture.goToPosture("StandInit",1.0)
-	if(word == 'left'):
-	    motion.moveTo(0.0,0.0,1.57)
-	if(word == 'right'):
-	    motion.moveTo(0.0,0.0,-1.57)
-	if(word == 'yes'):
-	    tts.say("I am happy")
-	if(word == 'no'):
-	    tts.say("I am sad")
-	if(word == 'go'):
-	    tts.say("NAO is in motion")
-	    navigation.navigateTo(0.5,0.5)
-	if(word == 'stop'):
-	    motion.stopMove()
-	if(word == 'off'):
-	    x = battery.getBatteryCharge()
-	    x = str(x)
-	    tts.say("The battery is %s Percent",x)
-	if(word == 'on'):
-	    led.on('FaceLeds')
-	if(word == '_background_noise_'):
-	    pass
+	try:
+		if(word == 'down'):
+		    posture.goToPosture("SitRelax",1.0)
+		if(word == 'up'):
+		    posture.goToPosture("StandInit",1.0)
+		if(word == 'left'):
+		    motion.moveTo(0.0,0.0,1.57)
+		if(word == 'right'):
+		    motion.moveTo(0.0,0.0,-1.57)
+		if(word == 'yes'):
+		    tts.say("I am happy")
+		if(word == 'no'):
+		    tts.say("I am sad")
+		if(word == 'go'):
+		    tts.say("NAO is in motion")
+		    # navigation.navigateTo(0.5,0.5)
+		    motion.moveTo(0.2,0,0)
+		if(word == 'stop'):
+		    motion.stopMove()
+		if(word == 'on'):
+		    x = battery.getBatteryCharge()
+		    x = str(x)
+		    x = "The battery is "+ str(x) + "%"
+		    tts.say(x)
+		if(word == 'off'):
+		    led.rasta(3.0)
+		if(word == '_background_noise_'):
+		    pass
+	except Exception as e:
+		print(e)
 
 
 model, nao_com = init()
 
-sample = record()
-predicted = predict(model, sample)
-print("Predicted value is: " + predicted)
-print()
+while(True):
 
-nao_call(predicted, nao_com)
+	print()
+	print("Press Enter to continue...")
+	raw_input()
 
-# print("YEYEYEYEYEYE")
-print()
-print()
-# print("Fuck you. Be attentive!!!!!! ")
+	# Emergency stop
+
+	# inp = input()
+	# if(inp == "xxx"):
+	# 	motion.stopMove()
+
+	sample = record()
+	predicted = predict(model, sample)
+	print("Predicted value is: " + predicted)
+	print()
+
+	nao_call(predicted, nao_com)
+
+	print("YEYEYEYEYEYE")
+	print("Fuck you. Be attentive!!!!!! ")
+
+	print()
+	
+
 
 
 
