@@ -102,7 +102,6 @@ def predict(model, new_sample):
 
 def init():
 	model = load_model()
-	return model
 
 	posture = ALProxy("ALRobotPosture",ip,port)
 	navigation = ALProxy("ALNavigation",ip,port)
@@ -158,8 +157,8 @@ def nao_call(word, nao_com):
 		print(e)
 
 
-# model, nao_com = init()
-model = init()
+model, nao_com = init()
+# model = init()
 
 while(True):
 
@@ -180,7 +179,7 @@ while(True):
 	print(get_conf(sample, model))
 	print()
 
-	# nao_call(predicted, nao_com)
+	nao_call(predicted, nao_com)
 
 	# print("YEYEYEYEYEYE")
 	# print("Fuck you. Be attentive!!!!!! ")
