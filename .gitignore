@@ -3,3 +3,4 @@ eng_data_extras/
 .directory
 .ipynb_checkpoints/
 .gitignore
+*/_background_noise_/*
